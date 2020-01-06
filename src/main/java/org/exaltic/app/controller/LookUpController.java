@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.exaltic.app.domain.Category;
+import org.exaltic.app.domain.Trainer;
 import org.exaltic.app.domain.User;
 import org.exaltic.app.repository.CategoryRepository;
 import org.exaltic.app.repository.TrainerRepository;
@@ -32,6 +33,6 @@ public class LookUpController {
 	
 	@GetMapping("/trainers")
     public List<User> getTrainers(){
-        return trainerRepository.findAll().stream().filter(e -> e.isEnabled()).collect(Collectors.toList());
+        return trainerRepository.findAll().stream().filter(e -> e.isEnabled() && e instanceof Trainer).collect(Collectors.toList());
     }
 }

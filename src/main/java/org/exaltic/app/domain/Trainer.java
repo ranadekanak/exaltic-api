@@ -27,7 +27,7 @@ public class Trainer extends User {
 	private Collection<Category> categories = new HashSet<>();
 	private Boolean isPremium;
 
-	@Column(name = "title", nullable = false)
+	@Column(name = "title", nullable = true)
 	public String getTitle() {
 		return title;
 	}
@@ -36,7 +36,7 @@ public class Trainer extends User {
 		this.title = title;
 	}
 	
-	@Column(name = "profile", nullable = false)
+	@Column(name = "profile", nullable = true)
 	public String getProfile() {
 		return profile;
 	}
@@ -97,7 +97,7 @@ public class Trainer extends User {
 		this.categories = categories;
 	}
 
-	@Column(name = "is_premium", nullable = false)
+	@Column(name = "is_premium", nullable = true)
 	public Boolean getIsPremium() {
 		return isPremium;
 	}

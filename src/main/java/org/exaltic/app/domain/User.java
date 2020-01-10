@@ -17,6 +17,8 @@ import javax.validation.constraints.Email;
 
 import org.exaltic.app.enums.AuthProvider;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "tbl_users")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -28,6 +30,7 @@ public class User extends AbstractIdentifierEntity {
     private AuthProvider provider;
     private Collection<Device> devices = new HashSet<Device>();
 
+    @JsonIgnore
     @OneToMany(targetEntity = Device.class, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
 	public Collection<Device> getDevices() {
 		return devices;

@@ -24,7 +24,8 @@ public class Trainer extends User {
 	private Collection<Certificate> certificates = new HashSet<Certificate>();
 	private Collection<Experience> workHistory = new HashSet<Experience>();
 	private Collection<ProfileVisitor> profileVisitors = new ArrayList<ProfileVisitor>();
-	private Collection<Category> categories = new HashSet<>();
+	private Collection<Category> categories = new HashSet<Category>();
+	private Collection<Media> media = new HashSet<Media>();
 	private Boolean isPremium;
 
 	@Column(name = "title", nullable = true)
@@ -95,6 +96,15 @@ public class Trainer extends User {
 	
 	public void setCategories(Collection<Category> categories) {
 		this.categories = categories;
+	}
+	
+	@OneToMany(targetEntity = Media.class, cascade = CascadeType.ALL, mappedBy = "trainer", orphanRemoval = true)
+	public Collection<Media> getMedia() {
+		return media;
+	}
+	
+	public void setMedia(Collection<Media> media) {
+		this.media = media;
 	}
 
 	@Column(name = "is_premium", nullable = true)

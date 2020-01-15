@@ -24,7 +24,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User extends AbstractIdentifierEntity {
 
-	private String name;
+	private String firstName;
+	private String lastName;
 	private String email;
 	private String imageUrl;
     private AuthProvider provider;
@@ -40,13 +41,22 @@ public class User extends AbstractIdentifierEntity {
 		this.devices = devices;
 	}
     
-	@Column(name = "name", nullable = false)
-	public String getName() {
-		return name;
+	@Column(name = "first_name", nullable = false)
+	public String getFirstName() {
+		return firstName;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	
+	@Column(name = "last_name", nullable = false)
+	public String getLastName() {
+		return lastName;
+	}
+	
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 	
 	@Email

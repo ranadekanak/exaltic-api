@@ -34,7 +34,8 @@ public class RegistrationController {
 		User user = new User();
 		user.setEnabled(Boolean.TRUE);
 		user.setVersion(1);
-		user.setName(registrationDTO.getName());
+		user.setFirstName(registrationDTO.getFirstName());
+		user.setLastName(registrationDTO.getLastName());
 		user.setEmail(registrationDTO.getEmail());
 		user.setProvider(registrationDTO.getProvider());
 		user.setImageUrl(registrationDTO.getImageUrl());
@@ -54,30 +55,31 @@ public class RegistrationController {
 	}
 
 	@PostMapping("/register/trainer")
-	public ResponseEntity updateTrainerAttributes(@RequestBody RegistrationDTO registrationDTO) {
+	public ResponseEntity registerTrainer(@RequestBody RegistrationDTO registrationDTO) {
 		if (trainerRepository.existsByEmail(registrationDTO.getEmail())) {
 			return ResponseEntity.badRequest().build();
 		}
-		Trainer user = new Trainer();
-		user.setEnabled(Boolean.TRUE);
-		user.setVersion(1);
-		user.setName(registrationDTO.getName());
-		user.setEmail(registrationDTO.getEmail());
-		user.setProvider(registrationDTO.getProvider());
-		user.setImageUrl(registrationDTO.getImageUrl());
+		Trainer trainer = new Trainer();
+		trainer.setEnabled(Boolean.TRUE);
+		trainer.setVersion(1);
+		trainer.setFirstName(registrationDTO.getFirstName());
+		trainer.setLastName(registrationDTO.getLastName());
+		trainer.setEmail(registrationDTO.getEmail());
+		trainer.setProvider(registrationDTO.getProvider());
+		trainer.setImageUrl(registrationDTO.getImageUrl());
 
 		Device device = new Device();
 		device.setEnabled(Boolean.TRUE);
 		device.setVersion(1);
 		device.setDeviceId(registrationDTO.getDeviceId());
 		device.setDeviceType(DeviceType.valueOf(registrationDTO.getDeviceType()));
-		device.setUser(user);
+		device.setUser(trainer);
 
-		if (!user.getDevices().contains(device)) {
-			user.getDevices().add(device);
+		if (!trainer.getDevices().contains(device)) {
+			trainer.getDevices().add(device);
 		}
 
-		return ResponseEntity.ok(trainerRepository.save(user));
+		return ResponseEntity.ok(trainerRepository.save(trainer));
 	}
 
 }

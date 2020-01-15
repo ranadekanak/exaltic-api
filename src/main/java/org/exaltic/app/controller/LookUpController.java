@@ -8,6 +8,7 @@ import org.exaltic.app.domain.Trainer;
 import org.exaltic.app.domain.User;
 import org.exaltic.app.repository.CategoryRepository;
 import org.exaltic.app.repository.TrainerRepository;
+import org.exaltic.aws.service.AmazonS3ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +20,13 @@ public class LookUpController {
 
 	final private CategoryRepository categoryRepository;
 	final private TrainerRepository trainerRepository;
+	final private AmazonS3ClientService amazonS3ClientService;
 	
 	@Autowired
-	public LookUpController(CategoryRepository categoryRepository, TrainerRepository trainerRepository) {
+	public LookUpController(CategoryRepository categoryRepository, TrainerRepository trainerRepository, AmazonS3ClientService amazonS3ClientService) {
 		this.categoryRepository = categoryRepository;
 		this.trainerRepository = trainerRepository;
+		this.amazonS3ClientService = amazonS3ClientService;
 	}
 	
 	@GetMapping("/categories")

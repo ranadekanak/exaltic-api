@@ -4,9 +4,12 @@ import javax.annotation.PostConstruct;
 
 import org.exaltic.app.domain.Category;
 import org.exaltic.app.repository.CategoryRepository;
+import org.exaltic.aws.service.AmazonS3ClientService;
+import org.exaltic.aws.service.impl.AmazonS3ClientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
@@ -35,4 +38,9 @@ public class ExalticApplication {
 			categoryRepository.save(new Category("Badminton"));
 		}
 	}
+    
+    @Bean
+    public AmazonS3ClientService amazonS3ClientService() {
+    	return new AmazonS3ClientServiceImpl();
+    }
 }

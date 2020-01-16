@@ -19,11 +19,13 @@ import org.exaltic.app.domain.User;
 import org.exaltic.app.dto.CertificateDTO;
 import org.exaltic.app.dto.MultiMediaUploadRequest;
 import org.exaltic.app.repository.CategoryRepository;
+import org.exaltic.app.repository.MediaRepository;
 import org.exaltic.app.repository.TrainerRepository;
 import org.exaltic.aws.service.AmazonS3ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,16 +45,18 @@ public class TrainerController {
 	private static final String APP_BUCKET_NAME = "exaltic-bucket";
 	private static final String SUFFIX = "/";
 	private static final String PROFILE_PHOTO_KEY = "profile_photo";
-	private static final String PORTFOLIO_MEDIA_KEY = "portfolio_media";
+	private static final String PORTFOLIO_KEY = "portfolio";
 	
 	final private TrainerRepository trainerRepository;
 	final private CategoryRepository categoryRepository;
+	final private MediaRepository mediaRepository;
 	final private AmazonS3ClientService amazonS3ClientService;
 	
 	@Autowired
-	public TrainerController(TrainerRepository trainerRepository, CategoryRepository categoryRepository, AmazonS3ClientService amazonS3ClientService) {
+	public TrainerController(TrainerRepository trainerRepository, CategoryRepository categoryRepository, MediaRepository mediaRepository, AmazonS3ClientService amazonS3ClientService) {
 		this.trainerRepository = trainerRepository;
 		this.categoryRepository = categoryRepository;
+		this.mediaRepository = mediaRepository;
 		this.amazonS3ClientService = amazonS3ClientService;
 	}
 	
@@ -160,7 +164,7 @@ public class TrainerController {
 	}
 	
 	@PutMapping("/trainer/{trainerId}/media")
-	public ResponseEntity uploadMedia(@PathVariable(name = "trainerId") Long trainerId, @RequestBody MultiMediaUploadRequest mediaUploadRequest) {
+	public ResponseEntity uploadMedia(@PathVariable(name = "trainerId") Long trainerId, @ModelAttribute MultiMediaUploadRequest mediaUploadRequest) {
 		Optional<User> user = trainerRepository.findById(trainerId);
 		if(user.isPresent()) {
 			Trainer trainer = (Trainer) user.get();
@@ -168,16 +172,20 @@ public class TrainerController {
 				Media media = new Media();
 				media.setEnabled(Boolean.TRUE);
 				media.setVersion(1);
+				media.setTrainer(trainer);
 				
 				media.setName(mediaUploadRequest.getName());
 				media.setDescription(mediaUploadRequest.getDescription());
 				media.setType(mediaUploadRequest.getType());
 				
-				amazonS3ClientService.uploadFileToBucket(APP_BUCKET_NAME, trainer.getId().toString()+"/"+PORTFOLIO_MEDIA_KEY, mediaUploadRequest.getFile().getInputStream());
-				media.setPath("/trainer/"+trainer.getId()+"/media/"+media.getId());
-				media.setTrainer(trainer);
+				media = mediaRepository.save(media);
 				
-				trainer.getMedia().add(media);
+				amazonS3ClientService.uploadFileToBucket(APP_BUCKET_NAME, trainer.getId().toString()+SUFFIX+PORTFOLIO_KEY+SUFFIX+mediaUploadRequest.getFile().getOriginalFilename(), mediaUploadRequest.getFile().getInputStream());
+				media.setPath("/trainer/"+trainer.getId()+"/media/"+media.getId());
+				
+				if(!trainer.getMedia().contains(media)) {
+					trainer.getMedia().add(media);
+				}
 			} catch (IOException ex) {
 				System.out.println(ex.getMessage());
 			}
@@ -191,7 +199,8 @@ public class TrainerController {
 		Optional<User> user = trainerRepository.findById(trainerId);
 		if(user.isPresent() && user.get().isEnabled()) {
 			Trainer trainer = (Trainer) user.get();
-			S3ObjectInputStream s3ObjectInputStream = amazonS3ClientService.downloadFileFromBucket(APP_BUCKET_NAME, trainer.getId().toString()+SUFFIX+PORTFOLIO_MEDIA_KEY+SUFFIX+mediaId);
+			Media media = trainer.getMedia().stream().filter(e -> e.getId().doubleValue() == mediaId.longValue()).findFirst().get();
+			S3ObjectInputStream s3ObjectInputStream = amazonS3ClientService.downloadFileFromBucket(APP_BUCKET_NAME, trainer.getId().toString()+SUFFIX+PORTFOLIO_KEY+SUFFIX+media.getName());
 	        try {
 				IOUtils.copy(s3ObjectInputStream, response.getOutputStream());
 			} catch (IOException e) {

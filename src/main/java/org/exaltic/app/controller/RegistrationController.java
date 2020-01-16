@@ -6,6 +6,7 @@ import org.exaltic.app.domain.User;
 import org.exaltic.app.dto.RegistrationDTO;
 import org.exaltic.app.enums.DeviceType;
 import org.exaltic.app.repository.UserRepository;
+import org.exaltic.aws.service.AmazonS3ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,13 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/pub")
 public class RegistrationController {
 
+	private static final String SUFFIX = "/";
+	private static final String PORTFOLIO_KEY = "portfolio";
+	
 	final private UserRepository<User> userRepository;
 	final private UserRepository<Trainer> trainerRepository;
+	final private AmazonS3ClientService amazonS3ClientService;
 
 	@Autowired
-	public RegistrationController(UserRepository<User> userRepository, UserRepository<Trainer> trainerRepository) {
+	public RegistrationController(UserRepository<User> userRepository, UserRepository<Trainer> trainerRepository, AmazonS3ClientService amazonS3ClientService) {
 		this.userRepository = userRepository;
 		this.trainerRepository = trainerRepository;
+		this.amazonS3ClientService = amazonS3ClientService;
 	}
 
 	@PostMapping("/register")
@@ -79,7 +85,10 @@ public class RegistrationController {
 			trainer.getDevices().add(device);
 		}
 
-		return ResponseEntity.ok(trainerRepository.save(trainer));
+		trainer = trainerRepository.save(trainer);
+		amazonS3ClientService.createBucket(trainer.getId().toString());
+		amazonS3ClientService.createBucket(trainer.getId().toString()+SUFFIX+PORTFOLIO_KEY);
+		return ResponseEntity.ok(trainer);
 	}
 
 }

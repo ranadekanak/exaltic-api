@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
+import org.aws.service.AmazonS3ClientService;
 import org.exaltic.app.domain.Attribute;
 import org.exaltic.app.domain.Category;
 import org.exaltic.app.domain.Certificate;
@@ -21,7 +23,6 @@ import org.exaltic.app.dto.MultiMediaUploadRequest;
 import org.exaltic.app.repository.CategoryRepository;
 import org.exaltic.app.repository.MediaRepository;
 import org.exaltic.app.repository.TrainerRepository;
-import org.exaltic.aws.service.AmazonS3ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +37,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.util.IOUtils;
 
 @RestController
 @RequestMapping("/api/pri")

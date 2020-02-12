@@ -3,12 +3,12 @@ package org.exaltic.app.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.aws.service.AmazonS3ClientService;
 import org.exaltic.app.domain.Category;
 import org.exaltic.app.domain.Trainer;
 import org.exaltic.app.domain.User;
 import org.exaltic.app.repository.CategoryRepository;
 import org.exaltic.app.repository.TrainerRepository;
+import org.exaltic.app.service.AmazonS3ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

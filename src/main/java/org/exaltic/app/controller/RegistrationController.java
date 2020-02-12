@@ -1,12 +1,12 @@
 package org.exaltic.app.controller;
 
-import org.aws.service.AmazonS3ClientService;
 import org.exaltic.app.domain.Device;
 import org.exaltic.app.domain.Trainer;
 import org.exaltic.app.domain.User;
 import org.exaltic.app.dto.RegistrationDTO;
 import org.exaltic.app.enums.DeviceType;
 import org.exaltic.app.repository.UserRepository;
+import org.exaltic.app.service.AmazonS3ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
